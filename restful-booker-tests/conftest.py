@@ -21,10 +21,8 @@ def client() :
     with httpx.Client(base_url=BASE_URL, timeout=10.0) as client:
         yield client
 
-
 # --- CRUD --- #
 
-# fixtures  
 @pytest.fixture(scope="module")
 def shared_booking(client, auth_token):
     # set up and validate
