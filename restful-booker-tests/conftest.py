@@ -35,7 +35,6 @@ def auth_token(client_no_auth):
     return response.json()["token"]
 
 # --- CRUD --- #
-
 @pytest.fixture(scope="module")
 def shared_booking(client):
     # set up and validate
@@ -45,9 +44,11 @@ def shared_booking(client):
     # ---
     yield booking
     # clean up and validate
-    deletion = h.delete_booking(client, booking_id)
-    assert deletion.status_code in [200, 201, 204]
-    assert h.find_booking(client, booking_id).status_code == 404
+    is_deleted = h.find_booking(client, booking_id).status_code == 404
+    if not is_deleted :
+        assert h.delete_booking(client, booking_id).status_code in [200, 201, 204]
+        assert h.find_booking(client, booking_id).status_code == 404
+    else: assert True
     
 @pytest.fixture (scope="module")
 def shared_booking_from_server(client, shared_booking) :
@@ -66,6 +67,9 @@ def fresh_booking(client):
     # ---
     yield booking
     # ---
-    deletion = h.delete_booking(client, booking_id)
-    assert deletion.status_code in [200, 201, 204]
-    assert h.find_booking(client, booking_id).status_code ==404
+     # clean up and validate
+    is_deleted = h.find_booking(client, booking_id).status_code == 404
+    if not is_deleted :
+        assert h.delete_booking(client, booking_id).status_code in [200, 201, 204]
+        assert h.find_booking(client, booking_id).status_code == 404
+    else: assert True
